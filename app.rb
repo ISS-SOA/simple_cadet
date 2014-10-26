@@ -3,7 +3,7 @@ require 'codebadges'
 require 'json'
 
 ##
-# Simple version of original CodeCadetApp from codebadges.herokuapp.com
+# Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
   helpers do
     def get_badges(username)
