@@ -38,6 +38,10 @@ class CodecadetApp < Sinatra::Base
     end
   end
 
+  get '/' do
+    puts "Simplecadet is up and working"
+  end
+
   get '/api/v1/cadet/:username.json' do
     content_type :json
     get_badges(params[:username]).to_json
