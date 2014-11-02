@@ -13,5 +13,5 @@ Handles:
   - returns: array of users and their missing badges
 
 Logging:
-  - POST  /api/v1/check
-    - logs info on JSON request parameters
+- POST  /api/v1/check
+  - logs info on JSON request parameters
