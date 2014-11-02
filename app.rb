@@ -45,7 +45,12 @@ class CodecadetApp < Sinatra::Base
 
   post '/api/v1/check' do
     content_type :json
-    req = JSON.parse(request.body.read)
+    begin
+      req = JSON.parse(request.body.read)
+    rescue
+      halt 400
+    end
+
     usernames = req['usernames']
     badges = req['badges']
     check_badges(usernames, badges).to_json

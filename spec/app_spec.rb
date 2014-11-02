@@ -35,4 +35,12 @@ describe 'Checking users for badges' do
     post '/api/v1/check', body.to_json, header
     last_response.must_be :not_found?
   end
+
+  it 'should return 400 for bad JSON formatting' do
+    header = { 'CONTENT_TYPE' => 'application/json' }
+    body = random_str(50)
+
+    post '/api/v1/check', body, header
+    last_response.must_be :bad_request?
+  end
 end
