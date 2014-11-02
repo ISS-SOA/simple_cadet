@@ -45,7 +45,7 @@ class CodecadetApp < Sinatra::Base
   end
 
   get '/' do
-    'Simplecadet is up and working'
+    'Simplecadet api/v1 is up and working'
   end
 
   namespace '/api/v1' do
