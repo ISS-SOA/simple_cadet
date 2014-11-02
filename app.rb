@@ -3,31 +3,38 @@ require 'codebadges'
 require 'json'
 
 ##
-# Simple version of original CodeCadetApp from codebadges.herokuapp.com
+# Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
   helpers do
     def get_badges(username)
-      badges_after = {
-        'id'      => username,
-        'type'    => 'cadet',
-        'badges'  => []
-      }
-
       user = params[:username]
-      CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
-        badges_after['badges'].push('id' => title, 'date' => date)
+
+      badges_after = { 'id' => user, 'type' => 'cadet', 'badges'  => [] }
+
+      begin
+        CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
+          badges_after['badges'].push('id' => title, 'date' => date)
+        end
+      rescue
+        halt 404
+      else
+        badges_after
       end
-      badges_after
     end
 
     def check_badges(usernames, badges)
       @check_info = {}
-      usernames.each do |username|
-        badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
-        @check_info[username] = \
-          badges.select { |badge| !badges_found.include? badge }
+      begin
+        usernames.each do |username|
+          badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
+          @check_info[username] = \
+            badges.select { |badge| !badges_found.include? badge }
+        end
+      rescue
+        halt 404
+      else
+        @check_info
       end
-      @check_info
     end
   end
 
@@ -38,7 +45,12 @@ class CodecadetApp < Sinatra::Base
 
   post '/api/v1/check' do
     content_type :json
-    req = JSON.parse(request.body.read)
+    begin
+      req = JSON.parse(request.body.read)
+    rescue
+      halt 400
+    end
+
     usernames = req['usernames']
     badges = req['badges']
     check_badges(usernames, badges).to_json
