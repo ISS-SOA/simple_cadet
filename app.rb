@@ -6,13 +6,12 @@ require 'json'
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
   helpers do
-    def get_badges(username)
-      user = params[:username]
-
-      badges_after = { 'id' => user, 'type' => 'cadet', 'badges'  => [] }
+    def user
+      username = params[:username]
+      badges_after = { 'id' => username, 'type' => 'cadet', 'badges' => [] }
 
       begin
-        CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
+        CodeBadges::CodecademyBadges.get_badges(username).each do |title, date|
           badges_after['badges'].push('id' => title, 'date' => date)
         end
       rescue
@@ -23,17 +22,17 @@ class CodecadetApp < Sinatra::Base
     end
 
     def check_badges(usernames, badges)
-      @check_info = {}
+      @incomplete = {}
       begin
         usernames.each do |username|
           badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
-          @check_info[username] = \
-            badges.select { |badge| !badges_found.include? badge }
+          @incomplete[username] = \
+                  badges.reject { |badge| badges_found.include? badge }
         end
       rescue
         halt 404
       else
-        @check_info
+        @incomplete
       end
     end
   end
@@ -44,7 +43,7 @@ class CodecadetApp < Sinatra::Base
 
   get '/api/v1/cadet/:username.json' do
     content_type :json
-    get_badges(params[:username]).to_json
+    user.to_json
   end
 
   post '/api/v1/check' do
