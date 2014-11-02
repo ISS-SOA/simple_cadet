@@ -1,4 +1,5 @@
 require_relative 'spec_helper'
+require 'json'
 
 describe 'Getting cadet information' do
   it 'should return their badges' do
@@ -6,9 +7,32 @@ describe 'Getting cadet information' do
     last_response.must_be :ok?
   end
 
-  it 'should handle unknown user' do
-    random_name = (0..20).map { ('a'..'z').to_a[rand(26)] }.join
-    get "/api/v1/cadet/#{random_name}.json"
+  it 'should return 404 for unknown user' do
+    get "/api/v1/cadet/#{random_str(20)}.json"
+    last_response.must_be :not_found?
+  end
+end
+
+describe 'Checking users for badges' do
+  it 'should find missing badges' do
+    header = { 'CONTENT_TYPE' => 'application/json' }
+    body = {
+      usernames: ['soumya.ray', 'chenlizhan'],
+      badges: ['Object-Oriented Programming II']
+    }
+
+    post '/api/v1/check', body.to_json, header
+    last_response.must_be :ok?
+  end
+
+  it 'should return 404 for unknown users' do
+    header = { 'CONTENT_TYPE' => 'application/json' }
+    body = {
+      usernames: [random_str(15), random_str(15)],
+      badges: [random_str(30)]
+    }
+
+    post '/api/v1/check', body.to_json, header
     last_response.must_be :not_found?
   end
 end

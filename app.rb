@@ -7,13 +7,10 @@ require 'json'
 class CodecadetApp < Sinatra::Base
   helpers do
     def get_badges(username)
-      badges_after = {
-        'id'      => username,
-        'type'    => 'cadet',
-        'badges'  => []
-      }
-
       user = params[:username]
+
+      badges_after = { 'id' => user, 'type' => 'cadet', 'badges'  => [] }
+
       begin
         CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
           badges_after['badges'].push('id' => title, 'date' => date)
@@ -27,12 +24,17 @@ class CodecadetApp < Sinatra::Base
 
     def check_badges(usernames, badges)
       @check_info = {}
-      usernames.each do |username|
-        badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
-        @check_info[username] = \
-          badges.select { |badge| !badges_found.include? badge }
+      begin
+        usernames.each do |username|
+          badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
+          @check_info[username] = \
+            badges.select { |badge| !badges_found.include? badge }
+        end
+      rescue
+        halt 404
+      else
+        @check_info
       end
-      @check_info
     end
   end
 
