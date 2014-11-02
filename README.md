@@ -12,6 +12,6 @@ Handles:
   - takes JSON: array of 'usernames', array of 'badges'
   - returns: array of users and their missing badges
 
-  Logging:
-  - POST  /api/v1/check
-    - logs info on JSON request parameters
+Logging:
+- POST  /api/v1/check
+  - logs info on JSON request parameters

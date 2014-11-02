@@ -1,8 +1,8 @@
 source 'http://rubygems.org'
 
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'codebadges'
-gem 'haml'
 gem 'json'
 
 group :test do
