@@ -14,10 +14,15 @@ class CodecadetApp < Sinatra::Base
       }
 
       user = params[:username]
-      CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
-        badges_after['badges'].push('id' => title, 'date' => date)
+      begin
+        CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
+          badges_after['badges'].push('id' => title, 'date' => date)
+        end
+      rescue
+        halt 404
+      else
+        badges_after
       end
-      badges_after
     end
 
     def check_badges(usernames, badges)
