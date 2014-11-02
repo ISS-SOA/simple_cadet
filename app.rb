@@ -5,6 +5,10 @@ require 'json'
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
+  configure :production, :development do
+    enable :logging
+  end
+
   helpers do
     def user
       username = params[:username]
@@ -50,6 +54,7 @@ class CodecadetApp < Sinatra::Base
     content_type :json
     begin
       req = JSON.parse(request.body.read)
+      logger.info req
     rescue
       halt 400
     end
