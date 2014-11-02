@@ -1,6 +1,13 @@
 require_relative 'spec_helper'
 require 'json'
 
+describe 'Getting the root of the service' do
+  it 'Should return ok' do
+    get '/'
+    last_response.must_be :ok?
+  end
+end
+
 describe 'Getting cadet information' do
   it 'should return their badges' do
     get '/api/v1/cadet/soumya.ray.json'
