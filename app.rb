@@ -39,7 +39,7 @@ class CodecadetApp < Sinatra::Base
   end
 
   get '/' do
-    puts "Simplecadet is up and working"
+    'Simplecadet is up and working'
   end
 
   get '/api/v1/cadet/:username.json' do
