@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'sinatra/namespace'
 require 'codebadges'
 require 'json'
 require './academy'
@@ -7,7 +6,7 @@ require './academy'
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
-  register Sinatra::Namespace
+  #register Sinatra::Contrib
 
   configure :production, :development do
     enable :logging
@@ -49,24 +48,24 @@ class CodecadetApp < Sinatra::Base
     'Simplecadet api/v1 is up and working'
   end
 
-  namespace '/api/v1' do
-    get '/cadet/:username.json' do
-      content_type :json
-      user.to_json
-    end
-
-    post '/check' do
-      content_type :json
-      begin
-        req = JSON.parse(request.body.read)
-        logger.info req
-      rescue
-        halt 400
-      end
-
-      usernames = req['usernames']
-      badges = req['badges']
-      check_badges(usernames, badges).to_json
-    end
+#  namespace '/api/v1' do
+  get '/api/v1/cadet/:username.json' do
+    content_type :json
+    user.to_json
   end
+
+  post '/api/v1/check' do
+    content_type :json
+    begin
+      req = JSON.parse(request.body.read)
+      logger.info req
+    rescue
+      halt 400
+    end
+
+    usernames = req['usernames']
+    badges = req['badges']
+    check_badges(usernames, badges).to_json
+  end
+#  end
 end
