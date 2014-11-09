@@ -8,10 +8,12 @@ Handles:
   - returns OK status to indicate service is alive
 - GET   /api/v1/cadet/<username>.json
   - returns JSON of user info: id (name), type, badges
-- POST  /api/v1/check
-  - takes JSON: array of 'usernames', array of 'badges'
-  - returns: array of users and their missing badges
-
-Logging:
-- POST  /api/v1/check
-  - logs info on JSON request parameters
+- POST  /api/v1/tutorials
+  - record tutorial request to DB
+    - description (string)
+    - usernames (json array)
+    - badges (json array)
+  - redirects to GET /api/v1/tutorials/:id
+- GET /api/v1/tutorials/:id
+  - takes: id # (1,2,3, etc.)
+  - returns: json of missing badges

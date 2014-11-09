@@ -33,7 +33,7 @@ describe 'SimpleCadet Stories' do
         badges: ['Object-Oriented Programming II']
       }
 
-      post '/api/v1/check', body.to_json, header
+      post '/api/v1/tutorials', body.to_json, header
       last_response.must_be :ok?
     end
 
@@ -44,7 +44,7 @@ describe 'SimpleCadet Stories' do
         badges: [random_str(30)]
       }
 
-      post '/api/v1/check', body.to_json, header
+      post '/api/v1/tutorials', body.to_json, header
       last_response.must_be :not_found?
     end
 
@@ -52,7 +52,7 @@ describe 'SimpleCadet Stories' do
       header = { 'CONTENT_TYPE' => 'application/json' }
       body = random_str(50)
 
-      post '/api/v1/check', body, header
+      post '/api/v1/tutorials', body, header
       last_response.must_be :bad_request?
     end
   end
