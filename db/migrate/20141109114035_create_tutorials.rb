@@ -1,6 +1,6 @@
 class CreateTutorials < ActiveRecord::Migration
   def self.up
-    create_table :tuturials do |t|
+    create_table :tutorials do |t|
       t.string :name
       t.text :usernames
       t.text :badges

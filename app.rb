@@ -56,13 +56,27 @@ class CodecadetApp < Sinatra::Base
     content_type :json
     begin
       req = JSON.parse(request.body.read)
+      usernames = req['usernames']
+      badges = req['badges']
       logger.info req
     rescue
       halt 400
     end
 
-    usernames = req['usernames']
-    badges = req['badges']
+    check_badges(usernames, badges).to_json
+  end
+
+  get '/api/v1/tutorials/:id' do
+    content_type :json
+    begin
+      @tutorial = Tutorial.find(1)
+      usernames = JSON.parse(@tutorial.usernames)
+      badges = JSON.parse(@tutorial.badges)
+      logger.info({ usernames: usernames, badges: badges }.to_json)
+    rescue
+      halt 400
+    end
+
     check_badges(usernames, badges).to_json
   end
 end

@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20141109114035) do
 
-  create_table "tuturials", force: true do |t|
+  create_table "tutorials", force: true do |t|
     t.string   "name"
     t.text     "usernames"
     t.text     "badges"
