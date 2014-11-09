@@ -1,12 +1,11 @@
 require 'sinatra/base'
-require 'sinatra/namespace'
 require 'codebadges'
 require 'json'
+require './academy'
 
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
-  register Sinatra::Namespace
 
   configure :production, :development do
     enable :logging
@@ -48,24 +47,42 @@ class CodecadetApp < Sinatra::Base
     'Simplecadet api/v1 is up and working'
   end
 
-  namespace '/api/v1' do
-    get '/cadet/:username.json' do
-      content_type :json
-      user.to_json
+  get '/api/v1/cadet/:username.json' do
+    content_type :json
+    user.to_json
+  end
+
+  post '/api/v1/tutorials' do
+    content_type :json
+    begin
+      req = JSON.parse(request.body.read)
+      logger.info req
+    rescue
+      halt 400
     end
 
-    post '/check' do
-      content_type :json
-      begin
-        req = JSON.parse(request.body.read)
-        logger.info req
-      rescue
-        halt 400
-      end
+    tutorial = Tutorial.new
+    tutorial.description = req['description'].to_json
+    tutorial.usernames = req['usernames'].to_json
+    tutorial.badges = req['badges'].to_json
 
-      usernames = req['usernames']
-      badges = req['badges']
-      check_badges(usernames, badges).to_json
+    if tutorial.save
+      status 201
+      redirect "/api/v1/tutorials/#{tutorial.id}"
     end
+  end
+
+  get '/api/v1/tutorials/:id' do
+    content_type :json
+    begin
+      @tutorial = Tutorial.find(params[:id])
+      usernames = JSON.parse(@tutorial.usernames)
+      badges = JSON.parse(@tutorial.badges)
+      logger.info({ usernames: usernames, badges: badges }.to_json)
+    rescue
+      halt 400
+    end
+
+    check_badges(usernames, badges).to_json
   end
 end
