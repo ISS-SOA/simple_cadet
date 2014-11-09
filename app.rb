@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'codebadges'
 require 'json'
-require './academy'
+require_relative 'model/tutorial'
 
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
