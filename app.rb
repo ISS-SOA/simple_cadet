@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'sinatra/namespace'
 require 'codebadges'
 require 'json'
+require './academy'
 
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet

@@ -1,4 +1,6 @@
 require 'rake/testtask'
+require './app'
+require 'sinatra/activerecord/rake'
 
 task :default => :spec
 
