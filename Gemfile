@@ -10,6 +10,7 @@ gem 'sinatra-activerecord'
 
 group :development do
   gem 'sqlite3'
+  gem 'tux'
 end
 
 group :production do
