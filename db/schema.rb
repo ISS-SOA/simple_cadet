@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(version: 20141109114035) do
 
   create_table "tutorials", force: true do |t|
-    t.string   "name"
+    t.string   "description"
     t.text     "usernames"
     t.text     "badges"
     t.datetime "created_at"

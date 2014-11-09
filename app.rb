@@ -52,24 +52,30 @@ class CodecadetApp < Sinatra::Base
     user.to_json
   end
 
-  post '/api/v1/check' do
+  post '/api/v1/tutorials' do
     content_type :json
     begin
       req = JSON.parse(request.body.read)
-      usernames = req['usernames']
-      badges = req['badges']
       logger.info req
     rescue
       halt 400
     end
 
-    check_badges(usernames, badges).to_json
+    tutorial = Tutorial.new
+    tutorial.description = req['description'].to_json
+    tutorial.usernames = req['usernames'].to_json
+    tutorial.badges = req['badges'].to_json
+
+    if tutorial.save
+      status 201
+      redirect "/api/v1/tutorials/#{tutorial.id}"
+    end
   end
 
   get '/api/v1/tutorials/:id' do
     content_type :json
     begin
-      @tutorial = Tutorial.find(1)
+      @tutorial = Tutorial.find(params[:id])
       usernames = JSON.parse(@tutorial.usernames)
       badges = JSON.parse(@tutorial.badges)
       logger.info({ usernames: usernames, badges: badges }.to_json)
