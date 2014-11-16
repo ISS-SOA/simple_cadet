@@ -34,7 +34,9 @@ describe 'SimpleCadet Stories' do
       }
 
       post '/api/v1/tutorials', body.to_json, header
-      last_response.must_be :ok?
+      last_response.must_be :redirect?
+      follow_redirect!
+      last_request.url.must_match /api\/v1\/tutorials\/\d+/
     end
 
     it 'should return 404 for unknown users' do
@@ -45,6 +47,9 @@ describe 'SimpleCadet Stories' do
       }
 
       post '/api/v1/tutorials', body.to_json, header
+
+      last_response.must_be :redirect?
+      follow_redirect!
       last_response.must_be :not_found?
     end
 

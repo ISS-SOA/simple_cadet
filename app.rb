@@ -66,8 +66,7 @@ class CodecadetApp < Sinatra::Base
     tutorial.usernames = req['usernames'].to_json
     tutorial.badges = req['badges'].to_json
 
-    if tutorial.save!
-      status 201
+    if tutorial.save
       redirect "/api/v1/tutorials/#{tutorial.id}"
     end
   end
