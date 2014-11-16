@@ -26,9 +26,14 @@ describe 'SimpleCadet Stories' do
   end
 
   describe 'Checking users for badges' do
+    before do
+      Tutorial.delete_all
+    end
+
     it 'should find missing badges' do
       header = { 'CONTENT_TYPE' => 'application/json' }
       body = {
+        description: 'Check valid users and badges',
         usernames: ['soumya.ray', 'chenlizhan'],
         badges: ['Object-Oriented Programming II']
       }
@@ -42,6 +47,7 @@ describe 'SimpleCadet Stories' do
     it 'should return 404 for unknown users' do
       header = { 'CONTENT_TYPE' => 'application/json' }
       body = {
+        description: 'Check invalid users and invalid badges',
         usernames: [random_str(15), random_str(15)],
         badges: [random_str(30)]
       }
