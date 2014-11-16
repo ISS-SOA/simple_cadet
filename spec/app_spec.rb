@@ -26,25 +26,36 @@ describe 'SimpleCadet Stories' do
   end
 
   describe 'Checking users for badges' do
+    before do
+      Tutorial.delete_all
+    end
+
     it 'should find missing badges' do
       header = { 'CONTENT_TYPE' => 'application/json' }
       body = {
+        description: 'Check valid users and badges',
         usernames: ['soumya.ray', 'chenlizhan'],
         badges: ['Object-Oriented Programming II']
       }
 
       post '/api/v1/tutorials', body.to_json, header
-      last_response.must_be :ok?
+      last_response.must_be :redirect?
+      follow_redirect!
+      last_request.url.must_match /api\/v1\/tutorials\/\d+/
     end
 
     it 'should return 404 for unknown users' do
       header = { 'CONTENT_TYPE' => 'application/json' }
       body = {
+        description: 'Check invalid users and invalid badges',
         usernames: [random_str(15), random_str(15)],
         badges: [random_str(30)]
       }
 
       post '/api/v1/tutorials', body.to_json, header
+
+      last_response.must_be :redirect?
+      follow_redirect!
       last_response.must_be :not_found?
     end
 
