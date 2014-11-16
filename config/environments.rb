@@ -1,9 +1,14 @@
-configure :development do
-  set :database, 'sqlite3:db/dev.db'
-  set :show_exceptions, true
+# configure :development do
+#   set :database, 'sqlite3:db/dev.db'
+#   set :show_exceptions, true
+# end
+
+configure :development, :test do
+  ActiveRecord::Base.configurations = YAML.load_file('config/database.yml')
 end
 
 configure :production do
+  # Use Heroku's parameters stored in their DATABASE_URL environment variable
   db = URI.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/mydb')
 
   ActiveRecord::Base.establish_connection(

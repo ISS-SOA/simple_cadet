@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'codebadges'
 require 'json'
-require './academy'
+require_relative 'model/tutorial'
 
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
@@ -44,15 +44,15 @@ class CodecadetApp < Sinatra::Base
   end
 
   get '/' do
-    'Simplecadet api/v1 is up and working'
+    'Simplecadet api/v2 is up and working'
   end
 
-  get '/api/v1/cadet/:username.json' do
+  get '/api/v2/cadet/:username.json' do
     content_type :json
     user.to_json
   end
 
-  post '/api/v1/tutorials' do
+  post '/api/v2/tutorials' do
     content_type :json
     begin
       req = JSON.parse(request.body.read)
@@ -67,12 +67,11 @@ class CodecadetApp < Sinatra::Base
     tutorial.badges = req['badges'].to_json
 
     if tutorial.save
-      status 201
-      redirect "/api/v1/tutorials/#{tutorial.id}"
+      redirect "/api/v2/tutorials/#{tutorial.id}"
     end
   end
 
-  get '/api/v1/tutorials/:id' do
+  get '/api/v2/tutorials/:id' do
     content_type :json
     begin
       @tutorial = Tutorial.find(params[:id])
