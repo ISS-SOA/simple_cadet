@@ -5,6 +5,10 @@ gem 'sinatra-contrib'
 gem 'codebadges'
 gem 'json'
 
+gem 'sinatra-flash'
+gem 'haml'
+gem 'tilt'
+
 gem 'activerecord'
 gem 'sinatra-activerecord'
 
