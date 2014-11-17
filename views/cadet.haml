@@ -7,14 +7,13 @@
 
   -if @cadet
     %table{class: 'center'}
-      -if true
-        %tbody
+      %tbody
+        %tr
+          %th Badge
+          %th Date
+        -@cadet['badges'].each do |badge|
           %tr
-            %th Badge
-            %th Date
-          -@cadet['badges'].each do |badge|
-            %tr
-              %td
-                = badge['id']
-              %td{width: '300'}
-                = badge['date']
+            %td
+              = badge['id']
+            %td{width: '300'}
+              = badge['date']
