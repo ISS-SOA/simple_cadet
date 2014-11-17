@@ -4,11 +4,11 @@
 A simple version of [chenlizhan](https://github.com/ChenLiZhan)'s [codecadet](https://github.com/ISS-SOA/codecadet) web application and service.
 
 API v2 Routes:
-- GET   /
+- GET /
   - returns OK status to indicate service is alive
-- GET   /api/v2/cadet/<username>.json
+- GET /api/v2/cadet/<username>.json
   - returns JSON of user info: id (name), type, badges
-- POST  /api/v2/tutorials
+- POST /api/v2/tutorials
   - record tutorial request to DB
     - description (string)
     - usernames (json array)
