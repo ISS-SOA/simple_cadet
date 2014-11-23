@@ -6,6 +6,8 @@ require_relative 'model/tutorial'
 require 'haml'
 require 'sinatra/flash'
 
+require 'httparty'
+
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
@@ -15,6 +17,8 @@ class CodecadetApp < Sinatra::Base
   configure :production, :development do
     enable :logging
   end
+
+  API_BASE_URI = 'http://localhost:9393'
 
   helpers do
     def user
@@ -77,9 +81,52 @@ class CodecadetApp < Sinatra::Base
     if @username && @cadet.nil?
       flash[:notice] = 'username not found' if @cadet.nil?
       redirect '/cadet'
+      return nil
     end
 
     haml :cadet
+  end
+
+  get '/tutorials' do
+    haml :tutorials
+  end
+
+  post '/tutorials' do
+    # status, headers, body = call env.merge("PATH_INFO" => '/api/v2/tutorials', "REQUEST_METHOD" => "POST")
+    # puts [status, headers, body.map(&:upcase)]
+
+    request_url = "#{API_BASE_URI}/api/v2/tutorials"
+    usernames = params[:usernames].split("\r\n")
+    badges = params[:badges].split("\r\n")
+    params_h = {
+      usernames: usernames,
+      badges: badges
+    }
+
+    options =  {  body: params_h.to_json,
+                  headers: { 'Content-Type' => 'application/json' }
+               }
+    result = HTTParty.post(request_url, options)
+
+    if (result.code != 200)
+      flash[:notice] = 'usernames not found'
+      redirect '/academy'
+      return nil
+    end
+
+    id = result.request.last_uri.path.split('/').last
+    redirect "/tutorials/#{id}"
+
+    # "usernames: #{usernames}<br>" \
+    # "badges: #{badges}<br>" \
+    # "body: #{options[:body]}<br>" \
+    # "code: #{result.code}<br>" + \
+    # "uri: #{result.request.last_uri}<br>" + \
+    # "body: #{result}"
+  end
+
+  get '/tutorials/#{id}' do
+    haml :academy
   end
 
 
@@ -99,10 +146,15 @@ class CodecadetApp < Sinatra::Base
 
   post '/api/v2/tutorials' do
     content_type :json
+
+    body = request.body.read
+    logger.info body
+
     begin
-      req = JSON.parse(request.body.read)
+      req = JSON.parse(body)
       logger.info req
-    rescue
+    rescue Exception => e
+      puts e.message
       halt 400
     end
 

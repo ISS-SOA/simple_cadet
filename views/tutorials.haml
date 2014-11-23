@@ -1,0 +1,14 @@
+.container
+  %form{:action => '/tutorials', :method => 'post', :id => 'check-form'}
+    %dl
+      %dt
+        %label{:for => 'check-form-usernames'} Usernames
+      %dd
+        %textarea{:id => 'check-form-usernames', :name => 'usernames', :rows => '10', :cols => '50'}
+    %dl
+      %dt
+        %label{:for => 'check-form-badges'} Badges names
+      %dd
+        %textarea{:id => 'check-form-badges', :name => 'badges', :rows => '10', :cols => '50'}
+    .float-clear
+      %input{:type => 'submit', :value => 'submit', :id => 'check-form-submit', :class => 'submit'}
