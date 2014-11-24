@@ -13,9 +13,14 @@ require 'httparty'
 class CodecadetApp < Sinatra::Base
   enable :sessions
   register Sinatra::Flash
+  use Rack::MethodOverride
 
   configure :production, :development do
     enable :logging
+  end
+
+  configure :development do
+    set :session_secret, "something"    # ignore if not using shotgun in development
   end
 
   API_BASE_URI = 'http://localhost:9393'
@@ -88,13 +93,11 @@ class CodecadetApp < Sinatra::Base
   end
 
   get '/tutorials' do
+    @action = :create
     haml :tutorials
   end
 
   post '/tutorials' do
-    # status, headers, body = call env.merge("PATH_INFO" => '/api/v2/tutorials', "REQUEST_METHOD" => "POST")
-    # puts [status, headers, body.map(&:upcase)]
-
     request_url = "#{API_BASE_URI}/api/v2/tutorials"
     usernames = params[:usernames].split("\r\n")
     badges = params[:badges].split("\r\n")
@@ -106,31 +109,49 @@ class CodecadetApp < Sinatra::Base
     options =  {  body: params_h.to_json,
                   headers: { 'Content-Type' => 'application/json' }
                }
+
     result = HTTParty.post(request_url, options)
 
     if (result.code != 200)
       flash[:notice] = 'usernames not found'
-      redirect '/academy'
+      redirect '/tutorials'
       return nil
     end
 
     id = result.request.last_uri.path.split('/').last
+    session[:result] = result.to_json
+    session[:usernames] = usernames
+    session[:badges] = badges
+    session[:action] = :create
     redirect "/tutorials/#{id}"
-
-    # "usernames: #{usernames}<br>" \
-    # "badges: #{badges}<br>" \
-    # "body: #{options[:body]}<br>" \
-    # "code: #{result.code}<br>" + \
-    # "uri: #{result.request.last_uri}<br>" + \
-    # "body: #{result}"
   end
 
-  get '/tutorials/#{id}' do
-    haml :academy
+  get '/tutorials/:id' do
+    if session[:action] == :create
+      @results = JSON.parse(session[:result])
+      @usernames = session[:usernames]
+      @badges = session[:badges]
+    else
+      request_url = "#{API_BASE_URI}/api/v2/tutorials/#{params[:id]}"
+      options =  { headers: { 'Content-Type' => 'application/json' } }
+      result = HTTParty.get(request_url, options)
+      @results = result
+    end
+
+    @id = params[:id]
+    @action = :update
+    haml :tutorials
+  end
+
+  delete '/tutorials/:id' do
+    request_url = "#{API_BASE_URI}/api/v2/tutorials/#{params[:id]}"
+    result = HTTParty.delete(request_url)
+    flash[:notice] = 'record of tutorial deleted'
+    redirect '/tutorials'
   end
 
 
-
+  # API handlers
   get '/api/v1/?' do
     'Simplecadet api/v2 is deprecated: please use <a href="/api/v2/">api/v2</a>'
   end
@@ -142,6 +163,10 @@ class CodecadetApp < Sinatra::Base
   get '/api/v2/cadet/:username.json' do
     content_type :json
     user.nil? ? halt(404) : user.to_json
+  end
+
+  delete '/api/v2/tutorials/:id' do
+    tutorial = Tutorial.destroy(params[:id])
   end
 
   post '/api/v2/tutorials' do
@@ -170,6 +195,7 @@ class CodecadetApp < Sinatra::Base
 
   get '/api/v2/tutorials/:id' do
     content_type :json
+    logger.info "GET /api/v2/tutorials/#{params[:id]}"
     begin
       @tutorial = Tutorial.find(params[:id])
       usernames = JSON.parse(@tutorial.usernames)
@@ -179,6 +205,8 @@ class CodecadetApp < Sinatra::Base
       halt 400
     end
 
-    check_badges(usernames, badges).to_json
+    result = check_badges(usernames, badges).to_json
+    logger.info "result: #{result}\n"
+    result
   end
 end
