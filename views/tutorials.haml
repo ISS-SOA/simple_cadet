@@ -1,0 +1,44 @@
+.container
+  %form{:action => '/tutorials', :method => 'post', :id => 'check-form'}
+    %dl{class: 'user-input'}
+      %dt
+        %label{:for => 'check-usernames'} Usernames
+      %dd
+        - if @usernames
+          = find_and_preserve "<textarea cols=\"35\" id=\"check-usernames\" name=\"usernames\" rows=\"10\">#{@usernames.join("\r\n")}</textarea>"
+        - else
+          %textarea{:id => 'check-usernames', :name => 'usernames', :rows => '10', :cols => '35'}
+    %dl{class: 'user-input'}
+      %dt
+        %label{:for => 'check-badges'} Badges names
+      %dd
+        - if @usernames
+          = find_and_preserve "<textarea cols=\"35\" id=\"check-badges\" name=\"badges\" rows=\"10\">#{@badges.join("\r\n")}</textarea>"
+        - else
+          %textarea{:id => 'check-badges', :name => 'badges', :rows => '10', :cols => '35'}
+    .float-clear
+      %input{:type => 'submit', :value => 'submit', :id => 'check-submit', :class => 'submit'}
+  %form{:action => "/tutorials/#{@id}", :method => 'post', :id => 'delete-form'}
+    - if @action == :update
+      %input{:type => 'submit', :name => '_method', :value => 'delete', :class => 'delete'}
+  - if @results
+    %h1 Results
+    %table{class: 'center'}
+      %tbody
+        %tr
+          %th Username
+          %th Badges Missing
+        - @results.each do |user, missing|
+          %tr
+            %td
+              = user
+              %br
+              - if missing.count > 0
+                = "#{missing.count} badges missing"
+              - else
+                = "no badges missing"
+            %td
+              = missing.join ", "
+
+  - else
+    %p "Enter search criteria above"

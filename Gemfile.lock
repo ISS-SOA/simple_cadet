@@ -22,11 +22,15 @@ GEM
       nokogiri (>= 1.6.2)
     haml (4.0.5)
       tilt
+    httparty (0.13.1)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.6.11)
     json (1.8.1)
     mini_portile (0.6.0)
     minitest (5.4.2)
     multi_json (1.10.1)
+    multi_xml (0.5.5)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     pg (0.17.1)
@@ -78,6 +82,7 @@ DEPENDENCIES
   activerecord
   codebadges
   haml
+  httparty
   json
   minitest
   pg
