@@ -13,3 +13,9 @@
       - else
         %li
           %a{:href => '/cadet', :id => 'cadet'} Cadet
+      - if current_page?('academy')
+        %li{:class => 'current_page_item'}
+          %a{:href => '/tutorials', :id => 'tutorials'} Tutorials
+      - else
+        %li
+          %a{:href => '/tutorials', :id => 'tutorials'} Tutorials
