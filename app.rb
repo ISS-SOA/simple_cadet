@@ -12,7 +12,7 @@ class CodecadetApp < Sinatra::Base
       badges_after = { 'id' => user, 'type' => 'cadet', 'badges'  => [] }
 
       begin
-        CodeBadges::CodecademyBadges.get_badges(user).each do |title, date|
+        CodeBadges::CodecademyBadges.new(user).badges.each do |title, date|
           badges_after['badges'].push('id' => title, 'date' => date)
         end
       rescue
@@ -26,7 +26,7 @@ class CodecadetApp < Sinatra::Base
       @check_info = {}
       begin
         usernames.each do |username|
-          badges_found = CodeBadges::CodecademyBadges.get_badges(username).keys
+          badges_found = CodeBadges::CodecademyBadges.new(username).badges.keys
           @check_info[username] = \
             badges.select { |badge| !badges_found.include? badge }
         end
