@@ -2,7 +2,7 @@ require 'sinatra/base'
 require_relative './model/userbadges'
 
 ##
-# Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
+# Simple web service to delver codebadges functionality
 class CodecadetApp < Sinatra::Base
   helpers do
     def get_badges(username)
