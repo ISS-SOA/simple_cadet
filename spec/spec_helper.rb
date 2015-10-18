@@ -11,5 +11,6 @@ def app
 end
 
 def random_str(n)
+  srand(n)
   (0..n).map { ('a'..'z').to_a[rand(26)] }.join
 end

@@ -1,40 +1,24 @@
 require 'sinatra/base'
-require 'codebadges'
-require 'json'
+require_relative './model/userbadges'
 
 ##
 # Simple version of CodeCadetApp from https://github.com/ISS-SOA/codecadet
 class CodecadetApp < Sinatra::Base
   helpers do
     def get_badges(username)
-      user = params[:username]
-
-      badges_after = { 'id' => user, 'type' => 'cadet', 'badges'  => [] }
-
-      begin
-        CodeBadges::CodecademyBadges.new(user).badges.each do |title, date|
-          badges_after['badges'].push('id' => title, 'date' => date)
-        end
-      rescue
-        halt 404
-      else
-        badges_after
-      end
+      UserBadges.new(username)
+    rescue
+      halt 404
     end
 
     def check_badges(usernames, badges)
       @check_info = {}
-      begin
-        usernames.each do |username|
-          badges_found = CodeBadges::CodecademyBadges.new(username).badges.keys
-          @check_info[username] = \
-            badges.select { |badge| !badges_found.include? badge }
-        end
-      rescue
-        halt 404
-      else
-        @check_info
-      end
+      usernames.map do |username|
+        found = UserBadges.new(username).badges.keys
+        [username, badges.select { |badge| !found.include? badge }]
+      end.to_h
+    rescue
+      halt 404
     end
   end
 
@@ -55,8 +39,6 @@ class CodecadetApp < Sinatra::Base
       halt 400
     end
 
-    usernames = req['usernames']
-    badges = req['badges']
-    check_badges(usernames, badges).to_json
+    check_badges(req['usernames'], req['badges']).to_json
   end
 end
