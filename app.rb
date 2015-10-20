@@ -23,7 +23,9 @@ class CodecadetApp < Sinatra::Base
   end
 
   get '/' do
-    'Simplecadet is up and working'
+    'Simplecadet service is up and working. See documentation at its ' \
+      '<a href="https://github.com/ISS-SOA/simple_cadet/tree/soa1_basic_api">' \
+      'Github repo (soa1_basic_api branch)</a>'
   end
 
   get '/api/v1/cadet/:username.json' do
