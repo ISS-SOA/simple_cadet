@@ -1,7 +1,8 @@
 # SimpleCadet Webservice
 [ ![Codeship Status for ISS-SOA/simple_cadet](https://codeship.io/projects/e1d4f690-44bc-0132-a4ed-52edbda4e693/status?branch=master)](https://codeship.io/projects/44861)
 
-A simple version of [chenlizhan](https://github.com/ChenLiZhan)'s [codecadet](https://github.com/ISS-SOA/codecadet) web application and service.
+A simple version of web service that scrapes CodeCademy data using the
+[codebadges](https://github.com/ISS-SOA/Codecademy-Ruby) gem
 
 Handles:
 - GET   /
