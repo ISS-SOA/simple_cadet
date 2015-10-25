@@ -1,5 +1,5 @@
 require 'sinatra/base'
-require_relative 'cadet_helpers'
+require_relative 'cadet_helper'
 
 ##
 # Simple web service to delver codebadges functionality
