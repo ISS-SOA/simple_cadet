@@ -11,12 +11,16 @@ end
 
 describe 'Getting cadet information' do
   it 'should return their badges' do
-    get '/api/v1/cadet/soumya.ray.json'
+    VCR.use_cassette('cadet') do
+      get '/api/v1/cadet/soumya.ray.json'
+    end
     last_response.must_be :ok?
   end
 
   it 'should return 404 for unknown user' do
-    get "/api/v1/cadet/#{random_str(20)}.json"
+    VCR.use_cassette('cadet_empty') do
+      get "/api/v1/cadet/#{random_str(20)}.json"
+    end
     last_response.must_be :not_found?
   end
 end
@@ -29,7 +33,9 @@ describe 'Checking users for badges' do
       badges: ['Object-Oriented Programming II']
     }
 
-    post '/api/v1/check', body.to_json, header
+    VCR.use_cassette('check') do
+      post '/api/v1/check', body.to_json, header
+    end
     last_response.must_be :ok?
   end
 
@@ -40,7 +46,9 @@ describe 'Checking users for badges' do
       badges: [random_str(30)]
     }
 
-    post '/api/v1/check', body.to_json, header
+    VCR.use_cassette('check_random') do
+      post '/api/v1/check', body.to_json, header
+    end
     last_response.must_be :not_found?
   end
 
