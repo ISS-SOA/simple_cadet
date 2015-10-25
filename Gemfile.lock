@@ -1,10 +1,13 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    addressable (2.3.8)
     ansi (1.5.0)
     ast (2.1.0)
     codebadges (2.0.1)
       oga
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     daemons (1.2.3)
     eventmachine (1.0.8)
     json (1.8.3)
@@ -21,6 +24,7 @@ GEM
     ruby-ll (2.1.2)
       ansi
       ast
+    safe_yaml (1.0.4)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -30,6 +34,10 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.0)
     tilt (2.0.1)
+    vcr (2.9.3)
+    webmock (1.21.0)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
 
 PLATFORMS
   ruby
@@ -43,3 +51,5 @@ DEPENDENCIES
   rake
   sinatra
   thin
+  vcr
+  webmock
