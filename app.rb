@@ -25,6 +25,7 @@ class CodecadetApp < Sinatra::Base
     content_type :json
     begin
       req = JSON.parse(request.body.read)
+      logger.info req
     rescue
       halt 400
     end
