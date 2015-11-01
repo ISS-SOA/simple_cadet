@@ -9,6 +9,9 @@ Handles:
   - returns OK status to indicate service is alive
 - GET   /api/v1/cadet/<username>.json
   - returns JSON of user info: id (name), type, badges
-- POST  /api/v1/check
-  - takes JSON: array of 'usernames', array of 'badges'
+- GET   /api/v1/tutorial/<tutorial_id>
+  - takes a URL parameter of previously created tutorial
   - returns: array of users and their missing badges
+- POST  /api/v1/tutorial
+  - takes JSON: array of 'usernames', array of 'badges'
+  - redirects (303) to GET /api/v1/tutorial/<new_tutorial_id>
