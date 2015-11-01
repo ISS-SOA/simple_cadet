@@ -1,14 +1,6 @@
-require_relative './model/userbadges'
-
 ##
 # Helpers for main Sinatra web application
-module CadetHelpers
-  def get_badges(username)
-    UserBadges.new(username)
-  rescue
-    halt 404
-  end
-
+module TutorialHelpers
   def check_badges(usernames, badges)
     usernames.map do |username|
       found = UserBadges.new(username).badges.keys
