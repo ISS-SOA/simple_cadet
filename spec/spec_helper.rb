@@ -9,7 +9,8 @@ require 'webmock/minitest'
 include Rack::Test::Methods
 
 def app
-  ApplicationController
+  # Load appropriate controllers (see: http://snippets.aktagon.com/snippets/459-how-to-test-modular-sinatra-apps-with-rack-test)
+  eval "Rack::Builder.new {( " + File.read(File.dirname(__FILE__) + '/../config.ru') + "\n )}"
 end
 
 def random_str(n)

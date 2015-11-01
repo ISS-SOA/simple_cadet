@@ -15,11 +15,6 @@ class ApplicationController < Sinatra::Base
       'Github repo (soa1_basic_api branch)</a>'
   end
 
-  get_cadet_username = lambda do
-    content_type :json
-    get_badges(params[:username]).to_json
-  end
-
   post_tutorial = lambda do
     content_type :json
     begin
@@ -67,8 +62,6 @@ class ApplicationController < Sinatra::Base
 
   # Web API Routes
   get '/', &get_root
-
-  get '/api/v1/cadets/:username.json', &get_cadet_username
 
   get '/api/v1/tutorials/:id', &get_tutorial
   post '/api/v1/tutorials', &post_tutorial
