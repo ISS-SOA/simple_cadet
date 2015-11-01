@@ -18,17 +18,17 @@ describe 'Checking many users for badges' do
     post '/api/v1/tutorials', body.to_json, header
     last_response.must_be :redirect?
     next_location = last_response.location
-    next_location.must_match /api\/v1\/tutorials\/\d+/
+    next_location.must_match %r{api\/v1\/tutorials\/\d+}
 
     # Check if request parameters are stored in ActiveRecord data store
-    tut_id = next_location.scan(/tutorials\/(\d+)/).flatten[0].to_i
+    tut_id = next_location.scan(%r{tutorials\/(\d+)}).flatten[0].to_i
     save_tutorial = Tutorial.find(tut_id)
     JSON.parse(save_tutorial[:usernames]).must_equal body[:usernames]
     JSON.parse(save_tutorial[:badges]).must_include body[:badges][0]
 
     # Check if redirect works
     follow_redirect!
-    last_request.url.must_match /api\/v1\/tutorials\/\d+/
+    last_request.url.must_match %r{api\/v1\/tutorials\/\d+}
   end
 
   it 'should return 404 for unknown users' do
@@ -39,9 +39,7 @@ describe 'Checking many users for badges' do
       badges: [random_str(30)]
     }
 
-    VCR.use_cassette('tutorial_missing') do
-      post '/api/v1/tutorials', body.to_json, header
-    end
+    post '/api/v1/tutorials', body.to_json, header
 
     last_response.must_be :redirect?
     follow_redirect!
