@@ -12,7 +12,6 @@ class CodecadetApp < Sinatra::Base
     end
 
     def check_badges(usernames, badges)
-      @check_info = {}
       usernames.map do |username|
         found = UserBadges.new(username).badges.keys
         [username, badges.select { |badge| !found.include? badge }]
