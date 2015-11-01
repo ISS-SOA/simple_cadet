@@ -68,7 +68,7 @@ class ApplicationController < Sinatra::Base
   # Web API Routes
   get '/', &get_root
 
-  get 'api/v1/cadets/:username.json', &get_cadet_username
+  get '/api/v1/cadets/:username.json', &get_cadet_username
 
   get '/api/v1/tutorials/:id', &get_tutorial
   post '/api/v1/tutorials', &post_tutorial
