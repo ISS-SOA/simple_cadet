@@ -22,7 +22,7 @@ class CodecadetApp < Sinatra::Base
     get_badges(params[:username]).to_json
   end
 
-  post_check = lambda do
+  post_tutorial = lambda do
     content_type :json
     begin
       req = JSON.parse(request.body.read)
@@ -31,11 +31,46 @@ class CodecadetApp < Sinatra::Base
       halt 400
     end
 
-    check_badges(req['usernames'], req['badges']).to_json
+    tutorial = Tutorial.new(
+      description: req['description'],
+      usernames: req['usernames'].to_json,
+      badges: req['badges'].to_json)
+
+    if tutorial.save
+      status 201
+      redirect "/api/v1/tutorials/#{tutorial.id}", 303
+    else
+      halt 500, 'Error saving tutorial request to the database'
+    end
+  end
+
+  get_tutorial = lambda do
+    content_type :json
+    begin
+      tutorial = Tutorial.find(params[:id])
+      description = tutorial.description
+      usernames = JSON.parse(tutorial.usernames)
+      badges = JSON.parse(tutorial.badges)
+      logger.info({ id: tutorial.id, description: description }.to_json)
+    rescue
+      halt 400
+    end
+
+    begin
+      results = check_badges(usernames, badges)
+    rescue
+      halt 500, 'Lookup of Codecademy failed'
+    end
+
+    { id: tutorial.id, description: description,
+      usernames: usernames, badges: badges,
+      missing: results }.to_json
   end
 
   # Web API Routes
   get '/', &get_root
   get '/api/v1/cadet/:username.json', &get_cadet_username
-  post '/api/v1/check', &post_check
+
+  get '/api/v1/tutorials/:id', &get_tutorial
+  post '/api/v1/tutorials', &post_tutorial
 end
