@@ -9,7 +9,7 @@ gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'tux'
 
-group :development do
+group :development, :test do
   gem 'sqlite3'
 end
 
