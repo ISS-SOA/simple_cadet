@@ -27,8 +27,13 @@ describe 'Checking many users for badges' do
     JSON.parse(save_tutorial[:badges]).must_include body[:badges][0]
 
     # Check if redirect works
-    follow_redirect!
+    VCR.use_cassette('tutorial_happy') do
+      follow_redirect!
+    end
     last_request.url.must_match %r{api\/v1\/tutorials\/\d+}
+
+    # Check if redirected response has results
+    JSON.parse(last_response.body).count.must_be :>, 0
   end
 
   it 'should return 404 for unknown users' do
@@ -42,7 +47,9 @@ describe 'Checking many users for badges' do
     post '/api/v1/tutorials', body.to_json, header
 
     last_response.must_be :redirect?
-    follow_redirect!
+    VCR.use_cassette('tutorial_sad_404') do
+      follow_redirect!
+    end
     last_response.must_be :not_found?
   end
 
