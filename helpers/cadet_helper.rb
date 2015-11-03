@@ -3,7 +3,7 @@
 module CadetHelpers
   def get_badges(username)
     UserBadges.new(username)
-  rescue
-    halt 404
+  rescue => e
+    halt 404, e
   end
 end
