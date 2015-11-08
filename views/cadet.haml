@@ -11,9 +11,9 @@
         %tr
           %th Badge
           %th Date
-        -@cadet['badges'].each do |badge|
+        -@cadet.badges.each do |badge_name, badge_date|
           %tr
             %td
-              = badge['id']
+              = badge_name
             %td{width: '300'}
-              = badge['date']
+              = badge_date

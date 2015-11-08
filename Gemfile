@@ -9,6 +9,13 @@ gem 'json'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'tux'
+gem 'hirb'
+
+gem 'httparty'
+
+gem 'sinatra-flash'
+gem 'haml'
+gem 'tilt'
 
 group :development, :test do
   gem 'sqlite3'
