@@ -14,7 +14,7 @@ gem 'hirb'
 gem 'httparty'
 
 gem 'sinatra-flash'
-gem 'haml'
+gem 'slim'
 gem 'tilt'
 
 group :development, :test do

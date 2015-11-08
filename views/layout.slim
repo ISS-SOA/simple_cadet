@@ -1,0 +1,13 @@
+doctype 5
+html
+  head
+    title Codecadet badges information
+    link href: '/style.css', media: 'screen, projection', rel: 'stylesheet'
+  body
+    header
+      = slim :nav
+    section
+      = styled_flash
+      = yield
+    .footer
+      = slim :footer

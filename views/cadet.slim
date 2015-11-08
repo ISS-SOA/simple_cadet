@@ -1,0 +1,19 @@
+.container
+
+  form action: '/cadet', method: 'get', id: 'user-form'
+    input type: 'text', name: 'username', id: 'home-form-username', placeholder: 'username here...'
+    input type: 'submit', id: 'home-form-submit', class: 'submit', value: 'submit'
+  p
+
+  -if @cadet
+    table class: 'center'
+      tbody
+        tr
+          th Badge
+          th Date
+        -@cadet.badges.each do |badge_name, badge_date|
+          tr
+            td
+              = badge_name
+            td width: '300'
+              = badge_date

@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'sinatra/flash'
 require 'httparty'
 require 'hirb'
+require 'slim'
 ##
 # Simple web service to delver codebadges functionality
 class ApplicationController < Sinatra::Base
@@ -109,7 +110,7 @@ class ApplicationController < Sinatra::Base
   delete '/api/v1/tutorials/:id', &api_delete_tutorial
 
   app_get_root = lambda do
-    haml :home
+    slim :home
   end
 
   app_get_cadet = lambda do
@@ -119,7 +120,7 @@ class ApplicationController < Sinatra::Base
       return nil
     end
 
-    haml :cadet
+    slim :cadet
   end
 
   app_get_cadet_username = lambda do
@@ -132,12 +133,12 @@ class ApplicationController < Sinatra::Base
       return nil
     end
 
-    haml :cadet
+    slim :cadet
   end
 
   app_get_tutorials = lambda do
     @action = :create
-    haml :tutorials
+    slim :tutorials
   end
 
   app_post_tutorials = lambda do
@@ -184,7 +185,7 @@ class ApplicationController < Sinatra::Base
     @action = :update
     @usernames = @results['usernames']
     @badges = @results['badges']
-    haml :tutorials
+    slim :tutorials
   end
 
   app_delete_tutorials_id = lambda do
