@@ -1,3 +1,4 @@
-Dir.glob('./{models,helpers,controllers}/*.rb').each { |file| require file }
+# \ -s puma
 
+Dir.glob('./{models,helpers,controllers}/*.rb').each { |file| require file }
 run ApplicationController

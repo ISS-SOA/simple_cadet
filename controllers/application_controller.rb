@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'sinatra/flash'
 require 'httparty'
+require 'hirb'
 ##
 # Simple web service to delver codebadges functionality
 class ApplicationController < Sinatra::Base
@@ -12,8 +13,19 @@ class ApplicationController < Sinatra::Base
   set :views, File.expand_path('../../views', __FILE__)
   set :public_folder, File.expand_path('../../public', __FILE__)
 
-  API_BASE_URI = 'http://localhost:9292'
-  API_VER = 'api/v1'
+  configure do
+    Hirb.enable
+    set :session_secret, 'something'
+    set :api_ver, 'api/v1'
+  end
+
+  configure :development, :test do
+    set :api_server, 'http://localhost:9393'
+  end
+
+  configure :production do
+    set :api_server, 'http://simplecadet.herokuapp.com'
+  end
 
   configure :production, :development do
     enable :logging
@@ -28,18 +40,18 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  get_root = lambda do
+  api_get_root = lambda do
     'Simplecadet service is up and working. See documentation at its ' \
       '<a href="https://github.com/ISS-SOA/simple_cadet/tree/soa1_basic_api">' \
       'Github repo (soa1_basic_api branch)</a>'
   end
 
-  get_cadet_username = lambda do
+  api_get_cadet_username = lambda do
     content_type :json
     get_badges(params[:username]).to_json
   end
 
-  post_tutorial = lambda do
+  api_post_tutorial = lambda do
     content_type :json
     begin
       req = JSON.parse(request.body.read)
@@ -55,13 +67,13 @@ class ApplicationController < Sinatra::Base
 
     if tutorial.save
       status 201
-      redirect "/#{API_VER}/tutorials/#{tutorial.id}", 303
+      redirect "/#{settings.api_ver}/tutorials/#{tutorial.id}", 303
     else
       halt 500, 'Error saving tutorial request to the database'
     end
   end
 
-  get_tutorial = lambda do
+  api_get_tutorial = lambda do
     content_type :json
     begin
       tutorial = Tutorial.find(params[:id])
@@ -84,25 +96,23 @@ class ApplicationController < Sinatra::Base
       missing: results }.to_json
   end
 
-  delete_tutorial = lambda do
-    
+  api_delete_tutorial = lambda do
+    tutorial = Tutorial.destroy(params[:id])
+    status(tutorial > 0 ? 200 : 404)
   end
 
   # Web API Routes
-  get '/api/v1/', &get_root
+  get '/api/v1/?', &api_get_root
+  get '/api/v1/cadets/:username.json', &api_get_cadet_username
+  get '/api/v1/tutorials/:id', &api_get_tutorial
+  post '/api/v1/tutorials/?', &api_post_tutorial
+  delete '/api/v1/tutorials/:id', &api_delete_tutorial
 
-  get '/api/v1/cadets/:username.json', &get_cadet_username
-
-  get '/api/v1/tutorials/:id', &get_tutorial
-  post '/api/v1/tutorials', &post_tutorial
-  delete '/api/v1/tutorials/:id', &delete_tutorial
-
-  # Web Views Routes
-  get '/' do
+  app_get_root = lambda do
     haml :home
   end
 
-  get '/cadet' do
+  app_get_cadet = lambda do
     @username = params[:username]
     if @username
       redirect "/cadet/#{@username}"
@@ -112,7 +122,7 @@ class ApplicationController < Sinatra::Base
     haml :cadet
   end
 
-  get '/cadet/:username' do
+  app_get_cadet_username = lambda do
     @username = params[:username]
     @cadet = get_badges(@username)
 
@@ -125,13 +135,13 @@ class ApplicationController < Sinatra::Base
     haml :cadet
   end
 
-  get '/tutorials' do
+  app_get_tutorials = lambda do
     @action = :create
     haml :tutorials
   end
 
-  post '/tutorials' do
-    request_url = "#{API_BASE_URI}/#{API_VER}/tutorials"
+  app_post_tutorials = lambda do
+    request_url = "#{settings.api_server}/#{settings.api_ver}/tutorials"
     usernames = params[:usernames].split("\r\n")
     badges = params[:badges].split("\r\n")
     params_h = {
@@ -143,7 +153,7 @@ class ApplicationController < Sinatra::Base
                   headers: { 'Content-Type' => 'application/json' }
                }
 
-    result = post(request_url, options)
+    result = HTTParty.post(request_url, options)
 
     if (result.code != 200)
       flash[:notice] = 'Could not process your request'
@@ -157,13 +167,17 @@ class ApplicationController < Sinatra::Base
     redirect "/tutorials/#{id}"
   end
 
-  get '/tutorials/:id' do
+  app_get_tutorials_id = lambda do
     if session[:action] == :create
       @results = JSON.parse(session[:results])
     else
-      request_url = "#{API_BASE_URI}/#{API_VER}/tutorials/#{params[:id]}"
+      request_url = "#{settings.api_server}/#{settings.api_ver}/tutorials/#{params[:id]}"
       options =  { headers: { 'Content-Type' => 'application/json' } }
       @results = HTTParty.get(request_url, options)
+      if @results.code != 200
+        flash[:notice] = 'cannot find record of tutorial'
+        redirect '/tutorials'
+      end
     end
 
     @id = params[:id]
@@ -173,10 +187,19 @@ class ApplicationController < Sinatra::Base
     haml :tutorials
   end
 
-  delete '/tutorials/:id' do
-    request_url = "#{API_BASE_URI}/#{API_VER}/tutorials/#{params[:id]}"
-    result = HTTParty.delete(request_url)
-    if result.code flash[:notice] = 'record of tutorial deleted'
+  app_delete_tutorials_id = lambda do
+    request_url = "#{settings.api_server}/#{settings.api_ver}/tutorials/#{params[:id]}"
+    HTTParty.delete(request_url)
+    flash[:notice] = 'record of tutorial deleted'
     redirect '/tutorials'
   end
+
+  # Web App Views Routes
+  get '/', &app_get_root
+  get '/cadet', &app_get_cadet
+  get '/cadet/:username', &app_get_cadet_username
+  get '/tutorials', &app_get_tutorials
+  post '/tutorials', &app_post_tutorials
+  get '/tutorials/:id', &app_get_tutorials_id
+  delete '/tutorials/:id', &app_delete_tutorials_id
 end
