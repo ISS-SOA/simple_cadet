@@ -12,7 +12,7 @@
       %dt
         %label{:for => 'check-badges'} Badges names
       %dd
-        - if @usernames
+        - if @badges
           = find_and_preserve "<textarea cols=\"35\" id=\"check-badges\" name=\"badges\" rows=\"10\">#{@badges.join("\r\n")}</textarea>"
         - else
           %textarea{:id => 'check-badges', :name => 'badges', :rows => '10', :cols => '35'}
@@ -28,10 +28,10 @@
         %tr
           %th Username
           %th Badges Missing
-        - @results.each do |user, missing|
+        - @results['missing'].each do |cadet, missing|
           %tr
             %td
-              = user
+              = cadet
               %br
               - if missing.count > 0
                 = "#{missing.count} badges missing"

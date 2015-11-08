@@ -1,12 +1,19 @@
 require 'sinatra/base'
 require 'sinatra/flash'
+require 'httparty'
 ##
 # Simple web service to delver codebadges functionality
 class ApplicationController < Sinatra::Base
   helpers CadetHelpers, TutorialHelpers
   enable :sessions
   register Sinatra::Flash
+  use Rack::MethodOverride
+
   set :views, File.expand_path('../../views', __FILE__)
+  set :public_folder, File.expand_path('../../public', __FILE__)
+
+  API_BASE_URI = 'http://localhost:9292'
+  API_VER = 'api/v1'
 
   configure :production, :development do
     enable :logging
@@ -48,7 +55,7 @@ class ApplicationController < Sinatra::Base
 
     if tutorial.save
       status 201
-      redirect "/api/v1/tutorials/#{tutorial.id}", 303
+      redirect "/#{API_VER}/tutorials/#{tutorial.id}", 303
     else
       halt 500, 'Error saving tutorial request to the database'
     end
@@ -77,6 +84,10 @@ class ApplicationController < Sinatra::Base
       missing: results }.to_json
   end
 
+  delete_tutorial = lambda do
+    
+  end
+
   # Web API Routes
   get '/api/v1/', &get_root
 
@@ -84,6 +95,7 @@ class ApplicationController < Sinatra::Base
 
   get '/api/v1/tutorials/:id', &get_tutorial
   post '/api/v1/tutorials', &post_tutorial
+  delete '/api/v1/tutorials/:id', &delete_tutorial
 
   # Web Views Routes
   get '/' do
@@ -119,7 +131,7 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/tutorials' do
-    request_url = "#{API_BASE_URI}/api/v2/tutorials"
+    request_url = "#{API_BASE_URI}/#{API_VER}/tutorials"
     usernames = params[:usernames].split("\r\n")
     badges = params[:badges].split("\r\n")
     params_h = {
@@ -131,43 +143,40 @@ class ApplicationController < Sinatra::Base
                   headers: { 'Content-Type' => 'application/json' }
                }
 
-    result = HTTParty.post(request_url, options)
+    result = post(request_url, options)
 
     if (result.code != 200)
-      flash[:notice] = 'usernames not found'
+      flash[:notice] = 'Could not process your request'
       redirect '/tutorials'
       return nil
     end
 
     id = result.request.last_uri.path.split('/').last
-    session[:result] = result.to_json
-    session[:usernames] = usernames
-    session[:badges] = badges
+    session[:results] = result.to_json
     session[:action] = :create
     redirect "/tutorials/#{id}"
   end
 
   get '/tutorials/:id' do
     if session[:action] == :create
-      @results = JSON.parse(session[:result])
-      @usernames = session[:usernames]
-      @badges = session[:badges]
+      @results = JSON.parse(session[:results])
     else
-      request_url = "#{API_BASE_URI}/api/v2/tutorials/#{params[:id]}"
+      request_url = "#{API_BASE_URI}/#{API_VER}/tutorials/#{params[:id]}"
       options =  { headers: { 'Content-Type' => 'application/json' } }
-      result = HTTParty.get(request_url, options)
-      @results = result
+      @results = HTTParty.get(request_url, options)
     end
 
     @id = params[:id]
     @action = :update
+    @usernames = @results['usernames']
+    @badges = @results['badges']
     haml :tutorials
   end
 
   delete '/tutorials/:id' do
-    request_url = "#{API_BASE_URI}/api/v2/tutorials/#{params[:id]}"
+    request_url = "#{API_BASE_URI}/#{API_VER}/tutorials/#{params[:id]}"
     result = HTTParty.delete(request_url)
-    flash[:notice] = 'record of tutorial deleted'
+    if result.code flash[:notice] = 'record of tutorial deleted'
     redirect '/tutorials'
   end
 end

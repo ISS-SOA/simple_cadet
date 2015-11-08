@@ -19,6 +19,7 @@ gem 'tilt'
 
 group :development, :test do
   gem 'sqlite3'
+  gem 'shotgun'
 end
 
 group :production do

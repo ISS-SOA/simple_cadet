@@ -58,6 +58,8 @@ GEM
       ansi
       ast
     safe_yaml (1.0.4)
+    shotgun (0.9.1)
+      rack (>= 1.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -101,6 +103,7 @@ DEPENDENCIES
   rack
   rack-test
   rake
+  shotgun
   sinatra
   sinatra-activerecord
   sinatra-flash
