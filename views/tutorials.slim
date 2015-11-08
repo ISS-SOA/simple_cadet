@@ -1,19 +1,21 @@
 .container
   form action='/tutorials' method='post' id='check-form'
-    dl class: 'user-input'
+    dl class='user-input'
       dt
         label for='check-usernames'  Usernames
       dd
         - if @usernames
-          = find_and_preserve "<textarea cols=\"35\" id=\"check-usernames\" name=\"usernames\" rows=\"10\">#{@usernames.join("\r\n")}</textarea>"
+          textarea cols="35" id="check-usernames" name="usernames" rows="10"
+            - @usernames.join("\r\n")
         - else
           textarea id='check-usernames' name='usernames' rows='10' cols='35'
-    dl class: 'user-input'
+    dl class='user-input'
       dt
         label for='check-badges'  Badges names
       dd
         - if @badges
-          = find_and_preserve "<textarea cols=\"35\" id=\"check-badges\" name=\"badges\" rows=\"10\">#{@badges.join("\r\n")}</textarea>"
+          textarea cols="35" id="check-badges" name="badges" rows="10"
+            - @badges.join("\r\n")
         - else
           textarea id='check-badges' name='badges' rows='10' cols='35'
     .float-clear
@@ -23,7 +25,7 @@
       input type='submit' name='_method' value='delete' class='delete'
   - if @results
     h1 Results
-    table class: 'center'
+    table class='center'
       tbody
         tr
           th Username
