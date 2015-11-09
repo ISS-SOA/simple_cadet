@@ -109,15 +109,6 @@ class ApplicationController < Sinatra::Base
   post '/api/v1/tutorials/?', &api_post_tutorial
   delete '/api/v1/tutorials/:id', &api_delete_tutorial
 
-  # Web App Views Routes
-  get '/', &app_get_root
-  get '/cadet', &app_get_cadet
-  get '/cadet/:username', &app_get_cadet_username
-  get '/tutorials', &app_get_tutorials
-  post '/tutorials', &app_post_tutorials
-  get '/tutorials/:id', &app_get_tutorials_id
-  delete '/tutorials/:id', &app_delete_tutorials_id
-
   app_get_root = lambda do
     slim :home
   end
@@ -203,4 +194,14 @@ class ApplicationController < Sinatra::Base
     flash[:notice] = 'record of tutorial deleted'
     redirect '/tutorials'
   end
+
+
+  # Web App Views Routes
+  get '/', &app_get_root
+  get '/cadet', &app_get_cadet
+  get '/cadet/:username', &app_get_cadet_username
+  get '/tutorials', &app_get_tutorials
+  post '/tutorials', &app_post_tutorials
+  get '/tutorials/:id', &app_get_tutorials_id
+  delete '/tutorials/:id', &app_delete_tutorials_id
 end
