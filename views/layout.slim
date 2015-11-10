@@ -5,7 +5,7 @@ html
     link rel='stylesheet' type='text/css' href='/style.css' media='screen projection'
   body
     header
-      = slim :nav
+      == slim :nav
     section
       == styled_flash
       == yield
