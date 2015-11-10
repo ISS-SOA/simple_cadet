@@ -109,7 +109,6 @@ class ApplicationController < Sinatra::Base
   post '/api/v1/tutorials/?', &api_post_tutorial
   delete '/api/v1/tutorials/:id', &api_delete_tutorial
 
-
   app_get_root = lambda do
     slim :home
   end
