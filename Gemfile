@@ -2,16 +2,24 @@ source 'http://rubygems.org'
 ruby '2.2.3'
 
 gem 'sinatra'
-gem 'thin'
+gem 'puma'
 gem 'codebadges'
 gem 'json'
 
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'tux'
+gem 'hirb'
+
+gem 'httparty'
+
+gem 'sinatra-flash'
+gem 'slim'
+gem 'tilt'
 
 group :development, :test do
   gem 'sqlite3'
+  gem 'shotgun'
 end
 
 group :production do

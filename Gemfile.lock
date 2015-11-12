@@ -24,15 +24,19 @@ GEM
       oga
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
-    daemons (1.2.3)
-    eventmachine (1.0.8)
+    hirb (0.7.3)
+    httparty (0.13.5)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     json (1.8.3)
     minitest (5.8.1)
+    multi_xml (0.5.5)
     oga (1.3.1)
       ast
       ruby-ll (~> 2.1)
     pg (0.18.3)
+    puma (2.15.3)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -51,6 +55,8 @@ GEM
       ansi
       ast
     safe_yaml (1.0.4)
+    shotgun (0.9.1)
+      rack (>= 1.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -58,11 +64,13 @@ GEM
     sinatra-activerecord (2.0.9)
       activerecord (>= 3.2)
       sinatra (~> 1.0)
+    sinatra-flash (0.3.0)
+      sinatra (>= 1.0.0)
+    slim (3.0.6)
+      temple (~> 0.7.3)
+      tilt (>= 1.3.3, < 2.1)
     sqlite3 (1.3.11)
-    thin (1.6.3)
-      daemons (~> 1.0, >= 1.0.9)
-      eventmachine (~> 1.0)
-      rack (~> 1.0)
+    temple (0.7.6)
     thread_safe (0.3.5)
     tilt (2.0.1)
     tux (0.3.0)
@@ -83,16 +91,22 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   codebadges
+  hirb
+  httparty
   json
   minitest
   pg
+  puma
   rack
   rack-test
   rake
+  shotgun
   sinatra
   sinatra-activerecord
+  sinatra-flash
+  slim
   sqlite3
-  thin
+  tilt
   tux
   vcr
   webmock
