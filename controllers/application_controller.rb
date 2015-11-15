@@ -142,19 +142,8 @@ class ApplicationController < Sinatra::Base
   end
 
   app_post_tutorials = lambda do
-    request_url = "#{settings.api_server}/#{settings.api_ver}/tutorials"
-    usernames = params[:usernames].split("\r\n")
-    badges = params[:badges].split("\r\n")
-    params_h = {
-      usernames: usernames,
-      badges: badges
-    }
-
-    options =  {  body: params_h.to_json,
-                  headers: { 'Content-Type' => 'application/json' }
-               }
-
-    result = HTTParty.post(request_url, options)
+    new_tutorial = TutorialForm.new(params)
+    result = CheckTutorialFromAPI.new(settings, new_tutorial).call
 
     if (result.code != 200)
       flash[:notice] = 'Could not process your request'
@@ -162,10 +151,9 @@ class ApplicationController < Sinatra::Base
       return nil
     end
 
-    id = result.request.last_uri.path.split('/').last
     session[:results] = result.to_json
     session[:action] = :create
-    redirect "/tutorials/#{id}"
+    redirect "/tutorials/#{result.id}"
   end
 
   app_get_tutorials_id = lambda do

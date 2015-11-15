@@ -5,6 +5,7 @@ gem 'sinatra'
 gem 'puma'
 gem 'codebadges'
 gem 'json'
+gem 'virtus'
 
 gem 'activerecord'
 gem 'sinatra-activerecord'
