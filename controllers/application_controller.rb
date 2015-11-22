@@ -98,8 +98,8 @@ class ApplicationController < Sinatra::Base
   end
 
   api_delete_tutorial = lambda do
-    tutorial = Tutorial.destroy(params[:id])
-    status(tutorial > 0 ? 200 : 404)
+    delete_count = Tutorial.delete(params[:id])
+    status(delete_count > 0 ? 200 : 404)
   end
 
   # Web API Routes
