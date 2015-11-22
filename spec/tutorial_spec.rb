@@ -60,4 +60,24 @@ describe 'Checking many users for badges' do
     post '/api/v1/tutorials', body, header
     last_response.must_be :bad_request?
   end
+
+  it 'should successfully delete old tutorials' do
+    header = { 'CONTENT_TYPE' => 'application/json' }
+    body = {
+      description: 'Check valid users and badges',
+      usernames: ['soumya.ray', 'chenlizhan'],
+      badges: ['Object-Oriented Programming II']
+    }
+
+    # Check redirect URL from post request
+    post '/api/v1/tutorials', body.to_json, header
+    VCR.use_cassette('tutorial_happy') do
+      follow_redirect!
+    end
+    new_id = JSON.parse(last_response.body)['id']
+
+    # Check if redirected response has results
+    delete "/api/v1/tutorials/#{new_id}"
+    last_response.must_be :ok?
+  end
 end
